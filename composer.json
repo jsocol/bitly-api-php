@@ -1,0 +1,14 @@
+{
+    "name": "bitly/bitly-api-php",
+    "type": "library",
+    "description": "PHP client for the Bitly API",
+    "keywords": ["bitly", "api"],
+    "homepage": "https://github.com/bitly/bitly-api-php",
+    "authors": [
+        {
+            "name": "James Socol",
+            "email": "james@bit.ly",
+            "role": "Developer"
+        }
+    ]
+}
