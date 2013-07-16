@@ -147,8 +147,86 @@ class Bitly
         return $results['link_save'];
     }
 
-    protected function call($endpoint, $params, $post=false, $json=true)
+    public function highvalue($limit)
     {
+        $params = array('limit' => $limit);
+        $results = $this->call('v3/highvalue', $params);
+        return $results['values'];
+    }
+
+    public function search($query, $limit=10, $offset=0, $lang=null,
+                           $cities=null, $domain=null, Array $fields=null)
+    {
+        $params = array('query' => $query, 'limit' => $limit,
+                        'offset' => $offset);
+        if ($lang !== null) {
+            $params['lang'] = $lang;
+        }
+        if ($cities !== null) {
+            $param['cities'] = $cities;
+        }
+        if ($domain !== null) {
+            $params['domain'] = $domain;
+        }
+        if ($fields !== null) {
+            $params['fields'] = implode(',', $fields);
+        }
+        $results = $this->call('v3/search', $params);
+        return $results['results'];
+    }
+
+    public function realtimeBurstingPhrases() {
+        return $this->call('v3/realtime/bursting_phrases');
+    }
+
+    public function realtimeHotPhrases() {
+        return $this->call('v3/realtime/hot_phrases');
+    }
+
+    public function realtimeClickrate($phrase) {
+        $params = array('phrase' => $phrase);
+        return $this->call('v3/realtime/clickrate', $params);
+    }
+
+    public function linkInfo($link) {
+        $params = array('link' => $link);
+        return $this->call('v3/link/info', $params);
+    }
+
+    public function linkContent($link) {
+        $params = array('link' => $link);
+        return $this->call('v3/link/content', $params);
+    }
+
+    public function linkCategory($link) {
+        $params = array('link' => $link);
+        $results = $this->call('v3/link/category', $params);
+        return $results['categories'];
+    }
+
+    public function linkSocial($link) {
+        $params = array('link' => $link);
+        $results = $this->call('v3/link/social', $params);
+        return $results['social_scores'];
+    }
+
+    public function linkLocation($link) {
+        $params = array('link' => $link);
+        $results = $this->call('v3/link/location', $params);
+        return $results['locations'];
+    }
+
+    public function linkLanguage($link) {
+        $params = array('link' => $link);
+        $results = $this->call('v3/link/language', $params);
+        return $results['languages'];
+    }
+
+    protected function call($endpoint, Array $params=null, $post=false, $json=true)
+    {
+        if ($params === null) {
+            $params = array();
+        }
         $url = $this->apiUrl . $endpoint;
         $params['format'] = 'json';
         if ($this->accessToken !== null &&
