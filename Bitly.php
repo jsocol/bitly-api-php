@@ -222,6 +222,109 @@ class Bitly
         return $results['languages'];
     }
 
+    public function linkClicks($link, $unit='day', $units=null,
+                               $timezone='America/New_York', $rollup=null,
+                               $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('link' => $link, 'unit' => $unit,
+                        'timezone' => $timezone, 'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/link/clicks', $params);
+    }
+
+    public function linkCountries($link, $unit='day', $units=null,
+                                  $timezone='America/New_York', $limit=100,
+                                  $unit_reference_ts='now')
+    {
+        $params = array('link' => $link, 'unit' => $unit,
+                        'timezone' => $timezone, 'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        return $this->call('v3/link/countries', $params);
+    }
+
+    public function linkEncoders($link, $myNetwork=null, $limit=10,
+                                 $expandUser=null)
+    {
+        $params = array('link' => $link, 'limit' => $limit);
+        if ($myNetwork !== null) {
+            $params['my_network'] = $myNetwork;
+        }
+        if ($expandUser !== null) {
+            $params['expand_user'] = $expandUser;
+        }
+        return $this->call('v3/link/encoders', $params);
+    }
+
+    public function linkEncodersCount($link)
+    {
+        $params = array('link' => $link);
+        return $this->call('v3/link/encoders_count', $params);
+    }
+
+    public function linkReferrers($link, $unit='day', $units=null,
+                                  $timezone='America/New_York', $limit=100,
+                                  $unit_reference_ts='now')
+    {
+        $params = array('link' => $link, 'unit' => $unit, 'limit' => $limit,
+                        'timezone' => $timezone,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        return $this->call('v3/link/referrers', $params);
+    }
+
+    public function linkReferrersByDomain($link, $unit='day', $units=null,
+                                          $timezone='America/New_York',
+                                          $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('link' => $link, 'unit' => $unit, 'limit' => $limit,
+                        'timezone' => $timezone,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        return $this->call('v3/link/refererrs_by_domain', $params);
+    }
+
+    public function linkReferringDomains($link, $unit='day', $units=null,
+                                         $timezone='America/New_York',
+                                         $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('link' => $link, 'unit' => $unit, 'limit' => $limit,
+                        'timezone' => $timezone,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        return $this->call('v3/link/refererring_domains', $params);
+    }
+
+    public function linkShares($link, $unit='day', $units=null,
+                               $timezone='America/New_York', $rollup=null,
+                               $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('link' => $link, 'unit' => $unit, 'limit' => $limit,
+                        'timezone' => $timezone,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/link/shares', $params);
+    }
+
     protected function call($endpoint, Array $params=null, $post=false, $json=true)
     {
         if ($params === null) {
