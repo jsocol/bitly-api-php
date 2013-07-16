@@ -10,5 +10,7 @@
             "email": "james@bit.ly",
             "role": "Developer"
         }
-    ]
+    ],
+    "license": "Apache Software License 2.0",
+    "version": "0.1.0"
 }
