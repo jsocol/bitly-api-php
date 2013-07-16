@@ -325,6 +325,74 @@ class Bitly
         return $this->call('v3/link/shares', $params);
     }
 
+    public function userInfo($login=null, $fullName=null)
+    {
+        $params = array();
+        if ($login !== null) {
+            $params['login'] = $login;
+        }
+        if ($fullName !== null) {
+            $params['full_name'] = $fullName;
+        }
+        return $this->call('v3/user/info', $params);
+    }
+
+    public function userLinkHistory($link=null, $limit=50, $offset=null,
+                                    $createdBefore=null, $createdAfter=null,
+                                    $modifiedAfter=null, $expandClientId=null,
+                                    $archived=null, $private=null, $user=null)
+    {
+        $params = array();
+        if ($link !== null) {
+            $params['link'] = $link;
+        }
+        if ($limit !== null) {
+            $params['limit'] == $limit;
+        }
+        if ($offset !== null) {
+            $params['offset'] = $offset;
+        }
+        if ($createdBefore !== null) {
+            $params['created_before'] = $createdBefore;
+        }
+        if ($createdAfter !== null) {
+            $params['created_after'] = $createdAfter;
+        }
+        if ($modifiedAfter !== null) {
+            $params['modified_after'] = $modifiedAfter;
+        }
+        if ($archived !== null) {
+            $params['archived'] = $archived;
+        }
+        if ($private !== null) {
+            $params['private'] = $private;
+        }
+        if ($user !== null) {
+            $params['user'] = $user;
+        }
+        return $this->call('v3/user/link_history', $params);
+    }
+
+    public function userNetworkHistory($offset=null, $expandClientId=false,
+                                       $limit=20, $expandUser=null)
+    {
+        $params = array('expand_client_id' => $expandClientId,
+                        'limit' => $limit);
+        if ($offset !== null) {
+            $params['offset'] = $offset;
+        }
+        if ($expandUser !== null) {
+            $params['expand_user'] = $expandUser;
+        }
+        return $this->call('v3/user/network_history', $params);
+    }
+
+    public function userTrackingDomainList()
+    {
+        $result = $this->call('v3/user/tracking_domain_list');
+        return $result['tracking_domains'];
+    }
+
     protected function call($endpoint, Array $params=null, $post=false, $json=true)
     {
         if ($params === null) {
