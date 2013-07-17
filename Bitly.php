@@ -520,6 +520,185 @@ class Bitly
         return $this->call('v3/user/shorten_counts', $params);
     }
 
+    public function bundleArchive($bundleLink)
+    {
+        $params = array('bundle_link' => $bundleLink);
+        $result = $this->call('v3/bundle/archive', $params, false, true);
+        return ($result === 'OK') ? true : false;
+    }
+
+    public function bundleBundlesByUser($user, $expandUser=null)
+    {
+        $params = array('user' => $user);
+        if ($expandUser !== null) {
+            $params['expand_user'] = $expandUser;
+        }
+        $result = $this->call('v3/bundle/bundles_by_user', $params);
+        return $result['bundles'];
+    }
+
+    public function bundleClone($bundleLink)
+    {
+        $params = array('bundle_link' => $bundleLink);
+        $result = $this->call('v3/bundle/clone', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleCollaboratorAdd($bundleLink, $collaborator)
+    {
+        $params = array('bundle_link' => $bundleLink,
+                        'collaborator' => $collaborator);
+        $result = $this->call('v3/bundle/collaborator_add', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleCollaboratorRemove($bundleLink, $collaborator)
+    {
+        $params = array('bundle_link' => $bundleLink,
+                        'collaborator' => $collaborator);
+        $result = $this->call('v3/bundle/collaborator_remove', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleContents($bundleLink)
+    {
+        $params = array('bundle_link' => $bundleLink);
+        $result = $this->call('v3/bundle/contents', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleCreate($private=null, $title=null, $description=null)
+    {
+        $params = array();
+        if ($private !== null) {
+            $params['private'] = $private;
+        }
+        if ($title !== null) {
+            $params['title'] = $title;
+        }
+        if ($description !== null) {
+            $params['description'] = $description;
+        }
+        $result = $this->call('v3/bundle/create', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleEdit($bundleLink, $title=null, $description=null,
+                               $private=null, $preview=null, $ogImage=null)
+    {
+        $params = array('bundle_link' => $bundleLink);
+        $keys = array();
+        if ($title !== null) {
+            $params['title'] = $title;
+            $keys[] = 'title';
+        }
+        if ($description !== null) {
+            $params['description'] = $description;
+            $keys[] = 'description';
+        }
+        if ($private !== null) {
+            $params['private'] = $private;
+            $keys[] = 'private';
+        }
+        if ($preview !== null) {
+            $params['preview'] = $preview;
+            $keys[] = 'preview';
+        }
+        if ($ogImage !== null) {
+            $params['og_image'] = $ogImage;
+            $keys[] = 'og_image';
+        }
+        $params['edit'] = implode(',', $keys);
+        $result = $this->call('v3/bundle/edit', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleLinkAdd($bundleLink, $link, $title=null)
+    {
+        $params = array('bundle_link' => $bundleLink, 'link' => $link);
+        if ($title !== null) {
+            $params['title'] = $title;
+        }
+        $result = $this->call('v3/bundle/link_add', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleLinkCommentAdd($bundleLink, $link, $comment)
+    {
+        $params = array('bundle_link' => $bundleLink, 'link' => $link,
+                        'comment' => $comment);
+        $result = $this->call('v3/bundle/link_comment_add', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleLinkCommentEdit($bundleLink, $link, $commentId,
+                                          $comment)
+    {
+        $params = array('bundle_link' => $bundleLink, 'link' => $link,
+                        'comment_id' => $commentId, 'comment' => $comment);
+        $result = $this->call('v3/bundle/link_comment_edit', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleLinkCommentRemove($bundleLink, $link, $commentId)
+    {
+        $params = array('bundle_link' => $bundleLink, 'link' => $link,
+                        'comment_id' => $commentId);
+        $result = $this->call('v3/bundle/link_comment_remove', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleLinkEdit($bundleLink, $link, $title=null,
+                                   $preview=null)
+    {
+        $params = array('bundle_link' => $bundleLink, 'link' => $link);
+        $keys = array();
+        if ($title !== null) {
+            $params['title'] = $title;
+            $keys[] = 'title';
+        }
+        if ($preview !== null) {
+            $params['preview'] = $preview;
+            $keys[] = 'preview';
+        }
+        $result = $this->call('v3/bundle/link_edit', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleLinkRemove($bundleLink, $link)
+    {
+        $params = array('bundle_link' => $bundleLink, 'link' => $link);
+        $result = $this->call('v3/bundle/link_remove', $params);
+        return $result['bundle'];
+    }
+
+    public function bundleLinkReorder($bundleLink, $link, $displayOrder)
+    {
+        $params = array('bundle_link' => $bundleLink, 'link' => $link,
+                        'display_order' => $displayOrder);
+        $result = $this->call('v3/bundle/link_reorder', $params);
+        return $result['bundle'];
+    }
+
+    // TODO: How?
+    //public function bundleReorder($bundleLink, Array $links) {}
+
+    public function bundleViewCount($bundleLink) {
+        $params = array('bundle_link' => $bundleLink);
+        $result = $this->call('v3/bundle/view_count', $params);
+        return $result;
+    }
+
+    public function userBundleHistory($expandUser=null)
+    {
+        $params = array();
+        if ($expandUser !== null) {
+            $params['expand_user'] = $expandUser;
+        }
+        $result = $this->call('v3/user/bundle_history', $params);
+        return $result['bundles'];
+    }
+
     protected function call($endpoint, Array $params=null, $post=false, $json=true)
     {
         if ($params === null) {
