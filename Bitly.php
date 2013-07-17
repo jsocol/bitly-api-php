@@ -50,7 +50,6 @@ class Bitly
         $result = $this->call('oauth/access_token', $params, true, false);
         $data = array();
         parse_str($result, $data);
-        var_dump($data);
         $this->accessToken = $data['access_token'];
         return $data['access_token'];
     }
