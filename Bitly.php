@@ -33,15 +33,20 @@ class Bitly
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        //$this->username = $username;
-        //$this->apiKey = $apiKey;
         $this->accessToken = $accessToken;
         $this->userAgent = 'PHP/' . phpversion() . ' bitly_api/0.1.0';
     }
 
     /**
-    * Given a {@param $code}, get an access token from Bitly.
-    */
+     * Given an OAuth2 $code, get an access token from Bitly.
+     *
+     * @param string $code
+     *  Authorization code from Bitly.
+     * @param string $redirectUri
+     *  The URI to which the user was redirected after authenticating.
+     *
+     * @see http://dev.bitly.com/authentication.html
+     */
     public function getAccessToken($code, $redirectUri)
     {
         $params = array('code' => $code, 'redirect_uri' => $redirectUri,
@@ -54,6 +59,19 @@ class Bitly
         return $data['access_token'];
     }
 
+    /**
+     * Expand a short URL or hash.
+     *
+     * One parameter must be specified. If both are specified, the short URL
+     * has precedence.
+     *
+     * @param string $shortUrl
+     *  (Optional) A full bitly short URL, e.g. "http://bit.ly/1234"
+     * @param string $hash
+     *  (Optional) The hash component of a bitly short URL, e.g. "1234"
+     *
+     * @see http://dev.bitly.com/links.html#v3_expand
+     */
     public function expand($shortUrl=null, $hash=null)
     {
         if (!$shortUrl && !$hash) {
@@ -71,6 +89,19 @@ class Bitly
         return $results['expand'][0];
     }
 
+    /**
+     * Get info about a given short URL or hash.
+     *
+     * One parameter must be specified. if both are specified, the short URL
+     * has precedence.
+     *
+     * @param string $shortUrl
+     *  (Optional) A full bitly short URL, e.g. "http://bit.ly/1234"
+     * @param string $hash
+     *  (Optional) The hash component of a bitly short URL, e.g. "1234"
+     * @param $expandUser
+     *  (Optional) Include extra information about the user.
+     */
     public function info($shortUrl=null, $hash=null, $expandUser=null)
     {
         if (!$shortUrl && !$hash) {
