@@ -20,14 +20,42 @@ class BitlyAPIError extends BitlyError
 
 class Bitly
 {
+    /* @type string|null The application's OAuth2 client ID. */
     public $clientId = null;
+
+    /* @type string|null The application's OAuth2 client secret. */
     public $clientSecret = null;
+
+    /* @type string|null The user or application's OAuth2 access token. */
     public $accessToken = null;
+
+    /* @type string The API hostname. */
     public $apiUrl = 'https://api-ssl.bitly.com/';
+
+    /* @type string|null The application's user agent. */
     public $userAgent = null;
+
+    /* @type int Timeout for communicating with Bitly. */
     public $timeout = 4;
+
+    /* @type int Timeout for connecting to Bitly. */
     public $connectTimeout = 2;
 
+    /**
+     * Create a new Bitly API client with the given credentials.
+     *
+     * @param string $clientId
+     *  (Optional) The application's registered Bitly client ID.
+     * @param string $clientSecret
+     *  (Optional) The application's registered Bitly client secret.
+     * @param string $accessToken
+     *  (Optional) The application or current user's access token. Necessary
+     *  for most API methods.
+     *
+     * @return Bitly
+     *
+     * @see http://dev.bitly.com/authentication.html
+     */
     public function __construct($clientId=null, $clientSecret=null,
                                 $accessToken=null)
     {
@@ -38,12 +66,17 @@ class Bitly
     }
 
     /**
-     * Given an OAuth2 $code, get an access token from Bitly.
+     * Given an OAuth2 auth code, get an access token from Bitly.
+     *
+     * Exchanges an auth code for an access token, sets the access token on
+     * this client instance, and returns the token.
      *
      * @param string $code
      *  Authorization code from Bitly.
      * @param string $redirectUri
      *  The URI to which the user was redirected after authenticating.
+     *
+     * @return string
      *
      * @see http://dev.bitly.com/authentication.html
      */
@@ -69,6 +102,8 @@ class Bitly
      *  (Optional) A full bitly short URL, e.g. "http://bit.ly/1234"
      * @param string $hash
      *  (Optional) The hash component of a bitly short URL, e.g. "1234"
+     *
+     * @return array
      *
      * @see http://dev.bitly.com/links.html#v3_expand
      */
@@ -101,6 +136,10 @@ class Bitly
      *  (Optional) The hash component of a bitly short URL, e.g. "1234"
      * @param $expandUser
      *  (Optional) Include extra information about the user.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/links.html#v3_info
      */
     public function info($shortUrl=null, $hash=null, $expandUser=null)
     {
@@ -122,13 +161,45 @@ class Bitly
         return $results['info'][0];
     }
 
+    /**
+     * Look up a bitly link based on a long URL.
+     *
+     * @param string $url
+     *  A long URL to look up.
+     *
+     * @return string
+     *
+     * @see http://dev.bitly.com/links.html#v3_link_lookup
+     */
     public function linkLookup($url)
     {
         $params = array('url' => $url);
         $results = $this->call('v3/link/lookup', $params);
-        return $results['link_lookup'][0];
+        return $results['link_lookup'][0]['aggregate_link'];
     }
 
+    /**
+     * Shorten a long URL.
+     *
+     * 'domain' is a preferred domain, but if the user has a custom short
+     * domain, the custom domain will always be used.
+     *
+     * @param string $longUrl
+     *  A long URL to shorten.
+     * @param string $domain
+     *  (Optional) A preferred domain (either 'bit.ly', 'j.mp', or 'bitly.com').
+     *
+     * @returns array
+     *  An associative array containing:
+     *   - 'new_hash' (bool) Whether this URL has been shortened before.
+     *   - 'url' (string) The actual short URL.
+     *   - 'hash' (string) A Bitly identifier which is unique to this account.
+     *   - 'global_hash' (string) A Bitly identifier which can be tracked
+     *     across accounts.
+     *   - 'long_url' (string) An normalized echo back of the original long URL.
+     *
+     * @see http://dev.bitly.com/links.html#v3_shorten
+     */
     public function shorten($url, $domain=null)
     {
         $params = array('longUrl' => $url);
@@ -136,16 +207,20 @@ class Bitly
             $params['domain'] = $domain;
         }
         $results = $this->call('v3/shorten', $params);
+        $results['new_hash'] = ($results['new_hash'] == 1) ? true : false;
         return $results;
     }
 
     /**
-    * Possible keys/values for $params are as on
-    *   http://dev.bitly.com/links.html#v3_user_link_edit
-    *
-    * @param $link A bitly link.
-    * @param $params An array of optional values from above.
-    */
+     * Edit a saved link.
+     *
+     * @param $link A bitly link, e.g. 'http://bit.ly/1234'.
+     * @param $params An array of optional values from above.
+     *
+     * @return string An echo back of the edited link.
+     *
+     * @see http://dev.bitly.com/links.html#v3_user_link_edit
+     */
     public function userLinkEdit($link, Array $params)
     {
         $keys = array_keys($params);
@@ -155,6 +230,19 @@ class Bitly
         return $results['link_edit'];
     }
 
+    /**
+     * Look up a Bitly link shortened by the authenticated user.
+     *
+     * @param string $url A long URL to look up.
+     *
+     * @return array
+     *  An associative array containing:
+     *   - 'url' (string) An echo back of the long URL.
+     *   - 'link' (string) The corresponding Bitly link.
+     *   - 'aggregate_link' (string) The corresponding aggregate link.
+     *
+     * @see http://dev.bitly.com/links.html#v3_user_link_lookup
+     */
     public function userLinkLookup($url) {
         $params = array('url' => $url);
         $results = $this->call('v3/user/link_lookup', $params);
@@ -252,11 +340,11 @@ class Bitly
 
     public function linkClicks($link, $unit='day', $units=null,
                                $timezone='America/New_York', $rollup=null,
-                               $limit=100, $unit_reference_ts='now')
+                               $limit=100, $unitReferenceTs='now')
     {
         $params = array('link' => $link, 'unit' => $unit,
                         'timezone' => $timezone, 'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -268,11 +356,11 @@ class Bitly
 
     public function linkCountries($link, $unit='day', $units=null,
                                   $timezone='America/New_York', $limit=100,
-                                  $unit_reference_ts='now')
+                                  $unitReferenceTs='now')
     {
         $params = array('link' => $link, 'unit' => $unit,
                         'timezone' => $timezone, 'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -300,11 +388,11 @@ class Bitly
 
     public function linkReferrers($link, $unit='day', $units=null,
                                   $timezone='America/New_York', $limit=100,
-                                  $unit_reference_ts='now')
+                                  $unitReferenceTs='now')
     {
         $params = array('link' => $link, 'unit' => $unit, 'limit' => $limit,
                         'timezone' => $timezone,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -313,11 +401,11 @@ class Bitly
 
     public function linkReferrersByDomain($link, $unit='day', $units=null,
                                           $timezone='America/New_York',
-                                          $limit=100, $unit_reference_ts='now')
+                                          $limit=100, $unitReferenceTs='now')
     {
         $params = array('link' => $link, 'unit' => $unit, 'limit' => $limit,
                         'timezone' => $timezone,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -326,11 +414,11 @@ class Bitly
 
     public function linkReferringDomains($link, $unit='day', $units=null,
                                          $timezone='America/New_York',
-                                         $limit=100, $unit_reference_ts='now')
+                                         $limit=100, $unitReferenceTs='now')
     {
         $params = array('link' => $link, 'unit' => $unit, 'limit' => $limit,
                         'timezone' => $timezone,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -339,11 +427,11 @@ class Bitly
 
     public function linkShares($link, $unit='day', $units=null,
                                $timezone='America/New_York', $rollup=null,
-                               $limit=100, $unit_reference_ts='now')
+                               $limit=100, $unitReferenceTs='now')
     {
         $params = array('link' => $link, 'unit' => $unit, 'limit' => $limit,
                         'timezone' => $timezone,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -423,11 +511,11 @@ class Bitly
 
     public function userClicks($unit='day', $units=null,
                                $timezone='America/New_York', $rollup=null,
-                               $limit=100, $unit_reference_ts='now')
+                               $limit=100, $unitReferenceTs='now')
     {
         $params = array('unit' => $unit, 'timezone' => $timezone,
                         'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -439,11 +527,11 @@ class Bitly
 
     public function userCountries($unit='day', $units=null,
                                   $timezone='America/New_York', $rollup=null,
-                                  $limit=100, $unit_reference_ts='now')
+                                  $limit=100, $unitReferenceTs='now')
     {
         $params = array('unit' => $unit, 'timezone' => $timezone,
                         'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -455,11 +543,11 @@ class Bitly
 
     public function userPopularLinks($unit='day', $units=null,
                                   $timezone='America/New_York', $limit=100,
-                                  $unit_reference_ts='now')
+                                  $unitReferenceTs='now')
     {
         $params = array('unit' => $unit, 'timezone' => $timezone,
                         'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -468,11 +556,11 @@ class Bitly
 
     public function userReferrers($unit='day', $units=null,
                                   $timezone='America/New_York', $rollup=null,
-                                  $limit=100, $unit_reference_ts='now')
+                                  $limit=100, $unitReferenceTs='now')
     {
         $params = array('unit' => $unit, 'timezone' => $timezone,
                         'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -485,11 +573,11 @@ class Bitly
     public function userReferringDomains($unit='day', $units=null,
                                          $timezone='America/New_York',
                                          $rollup=null, $limit=100,
-                                         $unit_reference_ts='now')
+                                         $unitReferenceTs='now')
     {
         $params = array('unit' => $unit, 'timezone' => $timezone,
                         'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -501,11 +589,11 @@ class Bitly
 
     public function userShareCounts($unit='day', $units=null,
                                     $timezone='America/New_York', $rollup=null,
-                                    $limit=100, $unit_reference_ts='now')
+                                    $limit=100, $unitReferenceTs='now')
     {
         $params = array('unit' => $unit, 'timezone' => $timezone,
                         'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -517,11 +605,11 @@ class Bitly
 
     public function userShareCountsByShareType(
         $unit='day', $units=null, $timezone='America/New_York', $rollup=null,
-        $limit=100, $unit_reference_ts='now')
+        $limit=100, $unitReferenceTs='now')
     {
         $params = array('unit' => $unit, 'timezone' => $timezone,
                         'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -534,11 +622,11 @@ class Bitly
     public function userShortenCounts($unit='day', $units=null,
                                       $timezone='America/New_York',
                                       $rollup=null, $limit=100,
-                                      $unit_reference_ts='now')
+                                      $unitReferenceTs='now')
     {
         $params = array('unit' => $unit, 'timezone' => $timezone,
                         'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -737,11 +825,11 @@ class Bitly
     public function userTrackingDomainClicks($domain, $unit='day', $units=null,
                                              $timezone='America/New_York',
                                              $rollup=null, $limit=100,
-                                             $unit_reference_ts='now')
+                                             $unitReferenceTs='now')
     {
         $params = array('domain' => $domain, 'unit' => $unit,
                         'timezone' => $timezone, 'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
@@ -753,11 +841,11 @@ class Bitly
 
     public function userTrackingDomainShortenCounts(
         $domain, $unit='day', $units=null, $timezone='America/New_York',
-        $rollup=null, $limit=100, $unit_reference_ts='now')
+        $rollup=null, $limit=100, $unitReferenceTs='now')
     {
         $params = array('domain' => $domain, 'unit' => $unit,
                         'timezone' => $timezone, 'limit' => $limit,
-                        'unit_reference_ts' => $unit_reference_ts);
+                        'unit_reference_ts' => $unitReferenceTs);
         if ($units !== null) {
             $params['units'] = $units;
         }
