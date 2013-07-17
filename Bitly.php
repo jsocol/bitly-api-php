@@ -22,15 +22,13 @@ class Bitly
 {
     public $clientId = null;
     public $clientSecret = null;
-    //public $username = null;
-    //public $apiKey = null;
     public $accessToken = null;
     public $apiUrl = 'https://api-ssl.bitly.com/';
     public $userAgent = null;
-    public $connectTimeout = 25;
+    public $timeout = 4;
+    public $connectTimeout = 2;
 
     public function __construct($clientId=null, $clientSecret=null,
-                                //$username=null, $apiKey=null,
                                 $accessToken=null)
     {
         $this->clientId = $clientId;
@@ -762,6 +760,7 @@ class Bitly
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->connectTimeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
         if ($post) {
             curl_setopt($ch, CURLOPT_POST, true);
