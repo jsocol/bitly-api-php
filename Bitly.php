@@ -699,6 +699,46 @@ class Bitly
         return $result['bundles'];
     }
 
+    public function bitlyProDomain($domain)
+    {
+        $params = array('domain' => $domain);
+        $result = $this->call('v3/bitly_pro_domain', $params);
+        return ($result['bitly_pro_domain'] == 1) ? true : false;
+    }
+
+    public function userTrackingDomainClicks($domain, $unit='day', $units=null,
+                                             $timezone='America/New_York',
+                                             $rollup=null, $limit=100,
+                                             $unit_reference_ts='now')
+    {
+        $params = array('domain' => $domain, 'unit' => $unit,
+                        'timezone' => $timezone, 'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/tracking_domain_clicks', $params);
+    }
+
+    public function userTrackingDomainShortenCounts(
+        $domain, $unit='day', $units=null, $timezone='America/New_York',
+        $rollup=null, $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('domain' => $domain, 'unit' => $unit,
+                        'timezone' => $timezone, 'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/tracking_domain_shorten_counts', $params);
+    }
+
     protected function call($endpoint, Array $params=null, $post=false, $json=true)
     {
         if ($params === null) {
