@@ -20,25 +20,53 @@ class BitlyAPIError extends BitlyError
 
 class Bitly
 {
-    /* @type string|null The application's OAuth2 client ID. */
+    /**
+     * The application's OAuth2 client ID.
+     *
+     * @type string|null
+     */
     public $clientId = null;
 
-    /* @type string|null The application's OAuth2 client secret. */
+    /**
+     * The application's OAuth2 client secret.
+     *
+     * @type string|null
+     */
     public $clientSecret = null;
 
-    /* @type string|null The user or application's OAuth2 access token. */
+    /**
+     * The user or application's OAuth2 access token.
+     *
+     * @type string|null
+     */
     public $accessToken = null;
 
-    /* @type string The API hostname. */
+    /**
+     * The API hostname.
+     *
+     * @type string
+     */
     public $apiUrl = 'https://api-ssl.bitly.com/';
 
-    /* @type string|null The application's user agent. */
+    /**
+     * The application's user agent.
+     *
+     * @type string|null
+     */
     public $userAgent = null;
 
-    /* @type int Timeout for communicating with Bitly. */
+    /**
+     * Timeout for communicating with Bitly.
+     *
+     * @type int
+     */
     public $timeout = 4;
 
-    /* @type int Timeout for connecting to Bitly. */
+    /**
+     * Timeout for connecting to Bitly.
+     *
+     * @type int
+     */
     public $connectTimeout = 2;
 
     /**
@@ -214,8 +242,11 @@ class Bitly
     /**
      * Edit a saved link.
      *
-     * @param $link A bitly link, e.g. 'http://bit.ly/1234'.
-     * @param $params An array of optional values from above.
+     * Possible keys/values for $params are as on
+     *   http://dev.bitly.com/links.html#v3_user_link_edit
+     *
+     * @param string $link A bitly link, e.g. 'http://bit.ly/1234'.
+     * @param array $params An array of optional values from above.
      *
      * @return string An echo back of the edited link.
      *
@@ -250,19 +281,42 @@ class Bitly
     }
 
     /**
-    * Possible keys/values for $params are as on
-    *   http://dev.bitly.com/links.html#v3_user_link_save
-    *
-    * @param $url A long URL to shorten and save.
-    * @param $params An array of optional values.
-    */
+     * Save a Bitly link as the authenticated user.
+     *
+     * Possible keys/values for $params are as on
+     *   http://dev.bitly.com/links.html#v3_user_link_save
+     *
+     * @param string $url A long URL to shorten and save.
+     * @param array $params An associative array of optional values.
+     *
+     * @return array
+     *  An associative array containing:
+     *   - 'link' (string) The Bitly link for the long URL.
+     *   - 'aggregate_link' (string) The corresponding Bitly aggregate link.
+     *   - 'new_link' (bool) Whether the user has saved this link before.
+     *   - 'long_url' (string) A normalized echo back of the long URL.
+     *
+     * @see http://dev.bitly.com/links.html#v3_user_link_save
+     */
     public function userLinkSave($url, Array $params)
     {
         $params['longUrl'] = $url;
         $results = $this->call('v3/user/link_save', $params);
-        return $results['link_save'];
+        $results = $results['link_save'];
+        $results['new_link'] = ($results['new_link'] == 1) ? true : false;
+        return $results;
     }
 
+    /**
+     * Return a specified number of 'high-value' Bitly links.
+     *
+     * @param int $limit Maximum number of links to return.
+     *
+     * @return array
+     *  A list of Bitly links.
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_highvalue
+     */
     public function highvalue($limit)
     {
         $params = array('limit' => $limit);
@@ -270,6 +324,30 @@ class Bitly
         return $results['values'];
     }
 
+    /**
+     * Search links receiving clicks.
+     *
+     * @param string $query A string to search for.
+     * @param int $limit
+     *  (Optional) The maximum number of links to return (10).
+     * @param int $offset
+     *  (Optional) The result to start with (0).
+     * @param string $lang
+     *  (Optional) A two-letter ISO language code.
+     * @param string $cities
+     *  (Optional) Limit to links active in this city (ordered like
+     *  'us-il-chicago').
+     * @param string $domain
+     *  (Optional) Restrict results to this domain.
+     * @fields string[]
+     *  (Optional) Which fields to return in the response.
+     *
+     * @return array
+     *  An array of results, each result is an associative array and its
+     *  contents will depend on 'fields'.
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_search
+     */
     public function search($query, $limit=10, $offset=0, $lang=null,
                            $cities=null, $domain=null, Array $fields=null)
     {
@@ -291,41 +369,125 @@ class Bitly
         return $results['results'];
     }
 
+    /**
+     * Returns phrases that are receiving an uncharacteristically high volume
+     * of click traffic, and the individual links (hashes) driving traffic to
+     * pages containing these phrases.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_realtime_bursting_phrases
+     */
     public function realtimeBurstingPhrases() {
         return $this->call('v3/realtime/bursting_phrases');
     }
 
+    /**
+     * Returns phrases that are receiving a consistently high volume of click
+     * traffic, and the individual links (hashes) driving traffic to pages
+     * containing these phrases.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_realtime_hot_phrases
+     */
     public function realtimeHotPhrases() {
         return $this->call('v3/realtime/hot_phrases');
     }
 
+    /**
+     * Returns the click rate for content containing a specified phrase.
+     *
+     * @param string $phrase
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_realtime_clickrate
+     */
     public function realtimeClickrate($phrase) {
         $params = array('phrase' => $phrase);
         return $this->call('v3/realtime/clickrate', $params);
     }
 
+    /**
+     * Returns metadata about a single bitly link.
+     *
+     * @param string $link A Bitly link.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_link_info
+     */
     public function linkInfo($link) {
         $params = array('link' => $link);
         return $this->call('v3/link/info', $params);
     }
 
+    /**
+     * Returns the “main article” from the linked page, as determined by the
+     * content extractor, in either HTML or plain text format.
+     *
+     * @param string $link A Bitly link.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_link_content
+     */
     public function linkContent($link) {
         $params = array('link' => $link);
         return $this->call('v3/link/content', $params);
     }
 
+    /**
+     * Returns the detected categories for a document, in descending order of
+     * confidence.
+     *
+     * @param string $link A Bitly link.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_link_category
+     */
     public function linkCategory($link) {
         $params = array('link' => $link);
         $results = $this->call('v3/link/category', $params);
         return $results['categories'];
     }
 
+    /**
+     * Returns the "social score" for a specified bitly link.
+     *
+     * Note that the social score are highly dependent upon activity (clicks)
+     * occurring on the bitly link. If there have not been clicks on a bitly
+     * link within the last 24 hours, it is possible a social score for that
+     * link does not exist.
+     *
+     * @param string $link A Bitly link.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_link_social
+     */
     public function linkSocial($link) {
         $params = array('link' => $link);
         $results = $this->call('v3/link/social', $params);
         return $results['social_scores'];
     }
 
+    /**
+     * Returns the significant locations for the bitly link.
+     *
+     * Note that locations are highly dependent upon activity (clicks)
+     * occurring on the bitly link. If there have not been clicks on a bitly
+     * link within the last 24 hours, it is possible that location data for
+     * that link does not exist.
+     *
+     * @param string $link A Bitly link.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_link_location
+     */
     public function linkLocation($link) {
         $params = array('link' => $link);
         $results = $this->call('v3/link/location', $params);
