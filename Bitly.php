@@ -393,6 +393,133 @@ class Bitly
         return $result['tracking_domains'];
     }
 
+    public function userClicks($unit='day', $units=null,
+                               $timezone='America/New_York', $rollup=null,
+                               $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('unit' => $unit, 'timezone' => $timezone,
+                        'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/clicks', $params);
+    }
+
+    public function userCountries($unit='day', $units=null,
+                                  $timezone='America/New_York', $rollup=null,
+                                  $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('unit' => $unit, 'timezone' => $timezone,
+                        'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/countries', $params);
+    }
+
+    public function userPopularLinks($unit='day', $units=null,
+                                  $timezone='America/New_York', $limit=100,
+                                  $unit_reference_ts='now')
+    {
+        $params = array('unit' => $unit, 'timezone' => $timezone,
+                        'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        return $this->call('v3/user/popular_links', $params);
+    }
+
+    public function userReferrers($unit='day', $units=null,
+                                  $timezone='America/New_York', $rollup=null,
+                                  $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('unit' => $unit, 'timezone' => $timezone,
+                        'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/referrers', $params);
+    }
+
+    public function userReferringDomains($unit='day', $units=null,
+                                         $timezone='America/New_York',
+                                         $rollup=null, $limit=100,
+                                         $unit_reference_ts='now')
+    {
+        $params = array('unit' => $unit, 'timezone' => $timezone,
+                        'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/referring_domains', $params);
+    }
+
+    public function userShareCounts($unit='day', $units=null,
+                                    $timezone='America/New_York', $rollup=null,
+                                    $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('unit' => $unit, 'timezone' => $timezone,
+                        'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/share_counts', $params);
+    }
+
+    public function userShareCountsByShareType(
+        $unit='day', $units=null, $timezone='America/New_York', $rollup=null,
+        $limit=100, $unit_reference_ts='now')
+    {
+        $params = array('unit' => $unit, 'timezone' => $timezone,
+                        'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/share_counts_by_share_type', $params);
+    }
+
+    public function userShortenCounts($unit='day', $units=null,
+                                      $timezone='America/New_York',
+                                      $rollup=null, $limit=100,
+                                      $unit_reference_ts='now')
+    {
+        $params = array('unit' => $unit, 'timezone' => $timezone,
+                        'limit' => $limit,
+                        'unit_reference_ts' => $unit_reference_ts);
+        if ($units !== null) {
+            $params['units'] = $units;
+        }
+        if ($rollup !== null) {
+            $params['rollup'] = $rollup;
+        }
+        return $this->call('v3/user/shorten_counts', $params);
+    }
+
     protected function call($endpoint, Array $params=null, $post=false, $json=true)
     {
         if ($params === null) {
