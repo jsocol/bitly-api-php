@@ -1092,6 +1092,17 @@ class Bitly
         return $this->call('v3/user/shorten_counts', $params);
     }
 
+    /**
+     * Archive a bundle for the authenticate user.
+     *
+     * Only the bundle's owner is allowed to archive it.
+     *
+     * @param string $bundleLink The URL of the bundle to archive.
+     *
+     * @return bool
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_archive
+     */
     public function bundleArchive($bundleLink)
     {
         $params = array('bundle_link' => $bundleLink);
@@ -1099,6 +1110,16 @@ class Bitly
         return ($result === 'OK') ? true : false;
     }
 
+    /**
+     * Returns a list of public bundles created by a user.
+     *
+     * @param string $user The user to get bundles for.
+     * @param bool $expandUser (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_bundles_by_user
+     */
     public function bundleBundlesByUser($user, $expandUser=null)
     {
         $params = array('user' => $user);
@@ -1109,6 +1130,15 @@ class Bitly
         return $result['bundles'];
     }
 
+    /**
+     * Clone a bundle for the authenticate user.
+     *
+     * @param string $bundleLink URL of the bundle to clone.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_clone
+     */
     public function bundleClone($bundleLink)
     {
         $params = array('bundle_link' => $bundleLink);
@@ -1116,6 +1146,16 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Add a collaborator to a bundle.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $collaborator Bitly login or email address to add.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_collaborator_add
+     */
     public function bundleCollaboratorAdd($bundleLink, $collaborator)
     {
         $params = array('bundle_link' => $bundleLink,
@@ -1124,6 +1164,16 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Remove a collaborator from a bundle.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $collaborator Bitly login of the collaborator to remove.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_collaborator_remove
+     */
     public function bundleCollaboratorRemove($bundleLink, $collaborator)
     {
         $params = array('bundle_link' => $bundleLink,
@@ -1132,6 +1182,16 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Returns information about a bundle and its contents.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param bool $expandUser (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_contents
+     */
     public function bundleContents($bundleLink)
     {
         $params = array('bundle_link' => $bundleLink);
@@ -1139,6 +1199,17 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Create a bundle for the authenticate user.
+     *
+     * @param bool $private (Optional)
+     * @param string $title (Optional)
+     * @param string $description (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_create
+     */
     public function bundleCreate($private=null, $title=null, $description=null)
     {
         $params = array();
@@ -1155,6 +1226,24 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Edit a bundle for the authenticated user.
+     *
+     * For optional string values, "null" means "don't change," while the empty
+     * string will clear the value. For all other optional values, "null" means
+     * "no change".
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $title (Optional)
+     * @param string $description (Optional)
+     * @param bool $private (Optional)
+     * @param bool $preview (Optional)
+     * @param string $ogImage (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_edit
+     */
     public function bundleEdit($bundleLink, $title=null, $description=null,
                                $private=null, $preview=null, $ogImage=null)
     {
@@ -1185,6 +1274,19 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Add a link to a bundle.
+     *
+     * Links are automatically added to the top (position 0) of the bundle.
+     *
+     * @param string $bundleLink URL of the bundle
+     * @param string $link A Bitly link or long URL.
+     * @param string $title (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_link_add
+     */
     public function bundleLinkAdd($bundleLink, $link, $title=null)
     {
         $params = array('bundle_link' => $bundleLink, 'link' => $link);
@@ -1195,6 +1297,17 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Add a comment to a bundle item.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $link Bitly link in the bundle.
+     * @param string $comment The comment, must be <= 512 characters.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_link_comment_add
+     */
     public function bundleLinkCommentAdd($bundleLink, $link, $comment)
     {
         $params = array('bundle_link' => $bundleLink, 'link' => $link,
@@ -1203,6 +1316,18 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Edit a comment on a bundle item.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $link Bitly link in the bundle.
+     * @param int $commentId ID of the comment to edit.
+     * @param string $comment The edited comment, must be <= 512 characters.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_link_comment_edit
+     */
     public function bundleLinkCommentEdit($bundleLink, $link, $commentId,
                                           $comment)
     {
@@ -1212,6 +1337,19 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Remove a comment from a bundle item.
+     *
+     * Only the original commenter and the bundle owner can remove comments.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $link Bitly link in the bundle.
+     * @param int $commentId ID of the comment to remove.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_link_comment_remove
+     */
     public function bundleLinkCommentRemove($bundleLink, $link, $commentId)
     {
         $params = array('bundle_link' => $bundleLink, 'link' => $link,
@@ -1220,6 +1358,20 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Edit a bundle item.
+     *
+     * For the optional parameters, a value of "null" means "no change."
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $link Bitly link in the bundle.
+     * @param string $title (Optional) The new title.
+     * @param bool $preview (Optional) Display preview content.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_link_edit
+     */
     public function bundleLinkEdit($bundleLink, $link, $title=null,
                                    $preview=null)
     {
@@ -1237,6 +1389,16 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Remove a link from a bundle.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $link Bitly link in the bundle.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_link_remove
+     */
     public function bundleLinkRemove($bundleLink, $link)
     {
         $params = array('bundle_link' => $bundleLink, 'link' => $link);
@@ -1244,6 +1406,20 @@ class Bitly
         return $result['bundle'];
     }
 
+    /**
+     * Reorder a link in a bundle.
+     *
+     * For $displayOrder, a value of -1 moves the link to the end of the
+     * bundle.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $link Bitly link in the bundle.
+     * @param int $displayOrder New position in the bundle.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_link_reorder
+     */
     public function bundleLinkReorder($bundleLink, $link, $displayOrder)
     {
         $params = array('bundle_link' => $bundleLink, 'link' => $link,
@@ -1255,12 +1431,50 @@ class Bitly
     // TODO: How?
     //public function bundleReorder($bundleLink, Array $links) {}
 
+    /**
+     * Remove a pending/invited collaborator from a bundle.
+     *
+     * @param string $bundleLink URL of the bundle.
+     * @param string $collaborator Bitly login or email address.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_pending_collaborator_remove
+     */
+    public function bundlePendingCollaboratorRemove($bundleLink,
+                                                    $collaborator)
+    {
+        $params = array('bundle_link' => $bundleLink,
+                        'collaborator' => $collaborator);
+        $result = $this->call('v3/bundle/pending_collaborator_remove',
+                              $params);
+        return $result['bundle'];
+    }
+
+    /**
+     * Get the number of views for a bundle.
+     *
+     * @param string $bundleLink URL of the bundle.
+     *
+     * @return int
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_bundle_view_count
+     */
     public function bundleViewCount($bundleLink) {
         $params = array('bundle_link' => $bundleLink);
         $result = $this->call('v3/bundle/view_count', $params);
-        return $result;
+        return $result['view_count'];
     }
 
+    /**
+     * Returns all the bundles this user has access to.
+     *
+     * @param bool $expandUser (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/bundles.html#v3_user_bundle_history
+     */
     public function userBundleHistory($expandUser=null)
     {
         $params = array();
