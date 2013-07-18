@@ -494,12 +494,36 @@ class Bitly
         return $results['locations'];
     }
 
+    /**
+     * Returns the significant languages for the Bitly link.
+     *
+     * @param string $link A Bitly link.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/data_apis.html#v3_link_language
+     */
     public function linkLanguage($link) {
         $params = array('link' => $link);
         $results = $this->call('v3/link/language', $params);
         return $results['languages'];
     }
 
+    /**
+     * Returns the number of clicks on a single Bitly link.
+     *
+     * @param string $link A Bitly link.
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_link_clicks
+     */
     public function linkClicks($link, $unit='day', $units=null,
                                $timezone='America/New_York', $rollup=null,
                                $limit=100, $unitReferenceTs='now')
@@ -516,6 +540,21 @@ class Bitly
         return $this->call('v3/link/clicks', $params);
     }
 
+    /**
+     * Returns metrics about the countries referring click traffic to a Bitly
+     * link.
+     *
+     * @param string $link A Bitly link.
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_link_countries
+     */
     public function linkCountries($link, $unit='day', $units=null,
                                   $timezone='America/New_York', $limit=100,
                                   $unitReferenceTs='now')
@@ -529,6 +568,20 @@ class Bitly
         return $this->call('v3/link/countries', $params);
     }
 
+    /**
+     * Returns users who have encoded this link.
+     *
+     * Optionally restricted to the requesting user's social graph.
+     *
+     * @param string $link A Bitly link.
+     * @param bool $myNetwork (Optional)
+     * @param int $limit (Optional)
+     * @param bool $expandUser (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_link_encoders
+     */
     public function linkEncoders($link, $myNetwork=null, $limit=10,
                                  $expandUser=null)
     {
@@ -542,12 +595,35 @@ class Bitly
         return $this->call('v3/link/encoders', $params);
     }
 
+    /**
+     * Returns the number of users who have shortened a single Bitly link.
+     *
+     * @param string $link A Bitly link.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_link_encoders_count
+     */
     public function linkEncodersCount($link)
     {
         $params = array('link' => $link);
         return $this->call('v3/link/encoders_count', $params);
     }
 
+    /**
+     * Returns metrics about the pages referring click traffic to a Bitly link.
+     *
+     * @param string $link A Bitly link.
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_link_referrers
+     */
     public function linkReferrers($link, $unit='day', $units=null,
                                   $timezone='America/New_York', $limit=100,
                                   $unitReferenceTs='now')
@@ -561,6 +637,21 @@ class Bitly
         return $this->call('v3/link/referrers', $params);
     }
 
+    /**
+     * Returns metrics about the pages referring click traffic to a Bitly link,
+     * grouped by domain.
+     *
+     * @param string $link A Bitly link.
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_link_referrers_by_domain
+     */
     public function linkReferrersByDomain($link, $unit='day', $units=null,
                                           $timezone='America/New_York',
                                           $limit=100, $unitReferenceTs='now')
@@ -574,6 +665,21 @@ class Bitly
         return $this->call('v3/link/refererrs_by_domain', $params);
     }
 
+    /**
+     * Returns metrics about the domains referring click traffic to a Bitly
+     * link.
+     *
+     * @param string $link A Bitly link.
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_link_referring_domains
+     */
     public function linkReferringDomains($link, $unit='day', $units=null,
                                          $timezone='America/New_York',
                                          $limit=100, $unitReferenceTs='now')
@@ -587,6 +693,21 @@ class Bitly
         return $this->call('v3/link/refererring_domains', $params);
     }
 
+    /**
+     * Returns metrics about shares of a single Bitly link.
+     *
+     * @param string $link A Bitly link.
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_link_shares
+     */
     public function linkShares($link, $unit='day', $units=null,
                                $timezone='America/New_York', $rollup=null,
                                $limit=100, $unitReferenceTs='now')
