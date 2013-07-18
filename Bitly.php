@@ -724,6 +724,22 @@ class Bitly
         return $this->call('v3/link/shares', $params);
     }
 
+    /**
+     * Return or update information about a user.
+     *
+     * If called with no arguments, will return information about the
+     * authenticated user.
+     *
+     * The $fullName argument is only valid for the authenticated user and will
+     * set the user's full name property.
+     *
+     * @param string $login (Optional)
+     * @param string $fullName (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/user_info.html#v3_user_info
+     */
     public function userInfo($login=null, $fullName=null)
     {
         $params = array();
@@ -736,6 +752,25 @@ class Bitly
         return $this->call('v3/user/info', $params);
     }
 
+    /**
+     * Returns entries from a user's link history in reverse chronological
+     * order.
+     *
+     * @param string $link (Optional)
+     * @param int $limit (Optional)
+     * @param int $offset (Optional)
+     * @param int $createdBefore (Optional)
+     * @param int $createdAfter (Optional)
+     * @param int $modifiedAfter (Optional)
+     * @param bool $expandClientId (Optional)
+     * @param string $archived (Optional) "on", "off" or "both".
+     * @param string $private (Optional) "on", "off" or "both".
+     * @param string $user (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/user_info.html#v3_user_link_history
+     */
     public function userLinkHistory($link=null, $limit=50, $offset=null,
                                     $createdBefore=null, $createdAfter=null,
                                     $modifiedAfter=null, $expandClientId=null,
@@ -772,6 +807,19 @@ class Bitly
         return $this->call('v3/user/link_history', $params);
     }
 
+    /**
+     * Returns entries from a user's network history in reverse chronological
+     * order.
+     *
+     * @param int $offset (Optional)
+     * @param bool $expandClientId (Optional)
+     * @param int $limit (Optional)
+     * @param bool $expandUser (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/user_info.html#v3_user_network_history
+     */
     public function userNetworkHistory($offset=null, $expandClientId=false,
                                        $limit=20, $expandUser=null)
     {
@@ -786,6 +834,13 @@ class Bitly
         return $this->call('v3/user/network_history', $params);
     }
 
+    /**
+     * Returns a list of tracking domains a user has configured.
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/user_info.html#v3_user_tracking_domain_list
+     */
     public function userTrackingDomainList()
     {
         $result = $this->call('v3/user/tracking_domain_list');
