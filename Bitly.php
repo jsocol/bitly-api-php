@@ -1,23 +1,33 @@
 <?php
 /**
-* Bitly API Client.
-*
-* LICENSE: Apache Software License v2.0, see LICENSE
-*
-* @copyright  Copyright (c) 2013 Bitly Inc.
-* @license    http://www.apache.org/licenses/LICENSE-2.0
-* @version    0.1.0
-* @link       https://github.com/bitly/bitly-api-php
-*/
+ * Bitly API Client.
+ *
+ * LICENSE: Apache Software License v2.0, see LICENSE
+ *
+ * @package    Bitly
+ * @copyright  Copyright (c) 2013 Bitly Inc.
+ * @license    http://www.apache.org/licenses/LICENSE-2.0
+ * @version    0.1.0
+ * @link       https://github.com/bitly/bitly-api-php
+ */
 
+/**
+ * Base class for Bitly client errors.
+ */
 class BitlyError extends Exception
 {}
 
 
+/**
+ * Raised when communicating with the API results in an error.
+ */
 class BitlyAPIError extends BitlyError
 {}
 
 
+/**
+ * A possibly-authenticated connection to the Bitly API.
+ */
 class Bitly
 {
     /**
@@ -1485,6 +1495,15 @@ class Bitly
         return $result['bundles'];
     }
 
+    /**
+     * Query whether a given domain is a valid Bitly pro domain.
+     *
+     * @param string $domain A short domain (e.g. "nyti.ms").
+     *
+     * @return bool
+     *
+     * @see http://dev.bitly.com/domains.html#v3_bitly_pro_domain
+     */
     public function bitlyProDomain($domain)
     {
         $params = array('domain' => $domain);
@@ -1492,6 +1511,22 @@ class Bitly
         return ($result['bitly_pro_domain'] == 1) ? true : false;
     }
 
+    /**
+     * Returns the number of clicks on Bitly links pointing to the
+     * specified tracking domains.
+     *
+     * @param string $domain A tracking domain.
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return int
+     *
+     * @see http://dev.bitly.com/domains.html#v3_user_tracking_domain_clicks
+     */
     public function userTrackingDomainClicks($domain, $unit='day', $units=null,
                                              $timezone='America/New_York',
                                              $rollup=null, $limit=100,
@@ -1506,9 +1541,26 @@ class Bitly
         if ($rollup !== null) {
             $params['rollup'] = $rollup;
         }
-        return $this->call('v3/user/tracking_domain_clicks', $params);
+        $result = $this->call('v3/user/tracking_domain_clicks', $params);
+        return $result['tracking_domain_clicks'];
     }
 
+    /**
+     * Returns the number of links pointing to a specified tracking
+     * domain shortened in a given time period by all Bitly users.
+     *
+     * @param string $domain A tracking domain.
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return int
+     *
+     * @see http://dev.bitly.com/domains.html#v3_user_tracking_domain_shorten_counts
+     */
     public function userTrackingDomainShortenCounts(
         $domain, $unit='day', $units=null, $timezone='America/New_York',
         $rollup=null, $limit=100, $unitReferenceTs='now')
@@ -1522,9 +1574,23 @@ class Bitly
         if ($rollup !== null) {
             $params['rollup'] = $rollup;
         }
-        return $this->call('v3/user/tracking_domain_shorten_counts', $params);
+        $result = $this->call('v3/user/tracking_domain_shorten_counts',
+                              $params);
+        return $result['tracking_domain_shorten_counts'];
     }
 
+    /**
+     * Execute a query against the Bitly API and return decoded results.
+     *
+     * @internal
+     *
+     * @param string $endpoint API endpoint to query.
+     * @param array $params (Optional) Query parameters.
+     * @param bool $post Do an HTTP POST instead of GET.
+     * @param bool $json Attempt to decode response as JSON.
+     *
+     * @return mixed
+     */
     protected function call($endpoint, Array $params=null, $post=false, $json=true)
     {
         if ($params === null) {
