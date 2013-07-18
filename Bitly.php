@@ -847,6 +847,21 @@ class Bitly
         return $result['tracking_domains'];
     }
 
+    /**
+     * Returns the aggregate number of clicks on all the authenticated user's
+     * Bitly links.
+     *
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_user_clicks
+     */
     public function userClicks($unit='day', $units=null,
                                $timezone='America/New_York', $rollup=null,
                                $limit=100, $unitReferenceTs='now')
@@ -863,6 +878,21 @@ class Bitly
         return $this->call('v3/user/clicks', $params);
     }
 
+    /**
+     * Returns aggregate metrics about the countries referring clicks to all
+     * the authenticated user's Bitly links.
+     *
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_user_countries
+     */
     public function userCountries($unit='day', $units=null,
                                   $timezone='America/New_York', $rollup=null,
                                   $limit=100, $unitReferenceTs='now')
@@ -879,6 +909,19 @@ class Bitly
         return $this->call('v3/user/countries', $params);
     }
 
+    /**
+     * Returns the authenticated user's most-clicked Bitly links.
+     *
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_user_popular_links
+     */
     public function userPopularLinks($unit='day', $units=null,
                                   $timezone='America/New_York', $limit=100,
                                   $unitReferenceTs='now')
@@ -892,6 +935,21 @@ class Bitly
         return $this->call('v3/user/popular_links', $params);
     }
 
+    /**
+     * Returns aggregate metrics about the pages referring click traffic to all
+     * of the authenticated user's Bitly links.
+     *
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_user_referrers
+     */
     public function userReferrers($unit='day', $units=null,
                                   $timezone='America/New_York', $rollup=null,
                                   $limit=100, $unitReferenceTs='now')
@@ -908,6 +966,21 @@ class Bitly
         return $this->call('v3/user/referrers', $params);
     }
 
+    /**
+     * Returns aggregate metrics about the domains referring click traffic to
+     * all of the authenticated user's Bitly links.
+     *
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_user_referring_domains
+     */
     public function userReferringDomains($unit='day', $units=null,
                                          $timezone='America/New_York',
                                          $rollup=null, $limit=100,
@@ -925,6 +998,21 @@ class Bitly
         return $this->call('v3/user/referring_domains', $params);
     }
 
+    /**
+     * Returns the number of shares by the authenticated user in a given time
+     * period.
+     *
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_user_share_counts
+     */
     public function userShareCounts($unit='day', $units=null,
                                     $timezone='America/New_York', $rollup=null,
                                     $limit=100, $unitReferenceTs='now')
@@ -941,6 +1029,21 @@ class Bitly
         return $this->call('v3/user/share_counts', $params);
     }
 
+    /**
+     * Returns the number of shares by the authenticated user, broken down by
+     * share type.
+     *
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_user_share_counts_by_share_type
+     */
     public function userShareCountsByShareType(
         $unit='day', $units=null, $timezone='America/New_York', $rollup=null,
         $limit=100, $unitReferenceTs='now')
@@ -957,6 +1060,21 @@ class Bitly
         return $this->call('v3/user/share_counts_by_share_type', $params);
     }
 
+    /**
+     * Returns the number of links shortened in a given time period by the
+     * authenticated user.
+     *
+     * @param string $unit (Optional)
+     * @param int $units (Optional)
+     * @param string|int $timezone (Optional)
+     * @param bool $rollup (Optional)
+     * @param int $limit (Optional)
+     * @param string $unitReferenceTs (Optional)
+     *
+     * @return array
+     *
+     * @see http://dev.bitly.com/link_metrics.html#v3_user_shorten_counts
+     */
     public function userShortenCounts($unit='day', $units=null,
                                       $timezone='America/New_York',
                                       $rollup=null, $limit=100,
