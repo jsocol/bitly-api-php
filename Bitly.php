@@ -24,6 +24,44 @@ class BitlyError extends Exception
 class BitlyAPIError extends BitlyError
 {}
 
+/**
+ * Build a query string from an array of param => values. Handle
+ * multiple values correctly.
+ *
+ * PHP's built-in http_build_query does the insane thing of converting
+ * param names when given an array value, which is only correct for PHP
+ * servers. This builds correct query strings given a smaller set of
+ * allowable inputs. Only one level of nesting is OK, e.g.:
+ *
+ *     $data = array(
+ *         'foo' => 'FOO',
+ *         'bar' => array('1', '2', '3')
+ *     );
+ *     echo build_params($data);
+ *     // foo=FOO&bar=1&bar=2&bar=3
+ *
+ * @internal
+ *
+ * @param array $params
+ *
+ * @return string
+ */
+function build_query(Array $params) {
+    $ret = array();
+    $fmt = '%s=%s';
+    $separator = '&';
+    foreach ($params as $k => $v) {
+        if (is_array($v)) {
+            foreach ($v as $_v) {
+                array_push($ret, sprintf($fmt, $k, urlencode($_v)));
+            }
+        } else {
+            array_push($ret, sprintf($fmt, $k, urlencode($v)));
+        }
+    }
+    return implode($separator, $ret);
+}
+
 
 /**
  * A possibly-authenticated connection to the Bitly API.
@@ -1621,7 +1659,7 @@ class Bitly
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
             curl_setopt($ch, CURLOPT_URL, $url);
         } else {
-            $query = http_build_query($params);
+            $query = build_query($params);
             $url .= '?' . $query;
             curl_setopt($ch, CURLOPT_URL, $url);
         }
