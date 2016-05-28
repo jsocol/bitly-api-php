@@ -118,6 +118,11 @@ class Bitly
     public $connectTimeout = 2;
 
     /**
+     * @var bool
+     */
+    private $isIPv6Disabled = false;
+
+    /**
      * Create a new Bitly API client with the given credentials.
      *
      * @param string $clientId
@@ -1617,6 +1622,11 @@ class Bitly
         return $result['tracking_domain_shorten_counts'];
     }
 
+    public function disableIPv6()
+    {
+        $this->isIPv6Disabled = true;
+    }
+
     /**
      * Execute a query against the Bitly API and return decoded results.
      *
@@ -1654,6 +1664,11 @@ class Bitly
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->connectTimeout);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
+
+        if ($this->isIPv6Disabled) {
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        }
+        
         if ($post) {
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
